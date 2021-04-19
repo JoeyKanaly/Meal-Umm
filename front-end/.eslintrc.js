@@ -4,6 +4,7 @@ module.exports = {
 	rules: {
 		indent: ['error', 'tab'],
 		'@typescript-eslint/indent': ['error', 'tab'],
+		'@typescript-eslint/explicit-function-return-type': 'off',
 		'prettier/prettier': [
 			'error',
 			{
@@ -11,5 +12,9 @@ module.exports = {
 				singleQuote: true,
 			},
 		],
+	},
+	globals: {
+		JSX: true,
+		React: true,
 	},
 };
