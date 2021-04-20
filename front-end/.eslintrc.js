@@ -10,6 +10,7 @@ module.exports = {
 			{
 				useTabs: true,
 				singleQuote: true,
+				endOfLine: 'lf',
 			},
 		],
 	},
