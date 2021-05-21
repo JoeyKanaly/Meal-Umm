@@ -2,7 +2,6 @@
   "name": "food-app-back-end",
   "version": "1.0.0",
   "description": "Api and Auth server for food-app",
-  "main": "./src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {

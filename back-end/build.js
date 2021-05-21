@@ -2,7 +2,10 @@ import esbuild from 'esbuild';
 
 esbuild.build({
 	entryPoints: ['./src/index.ts'],
-	platform: 'neutral',
+	bundle: true,
+	external: ['fastify', 'dotenv'],
+	platform: 'node',
+	format: 'esm',
 	minify: true,
 	outfile: './build/index.js',
 });
