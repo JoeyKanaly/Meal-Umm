@@ -1,0 +1,5 @@
+{
+	"watch": ["src"],
+	"exec": "npm run build && node ./build/index.js",
+	"ext": "ts,js"
+}
