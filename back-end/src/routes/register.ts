@@ -3,29 +3,19 @@ import { createSession, createUser } from '../user';
 import argon2 from 'argon2';
 import { setAuthCookies } from '../cookies';
 import { connectionData } from '../types/connectionData';
+import { invalidDataError } from '../errors';
 const { ARGON_MEMORY_COST, ARGON_PARALLELISM, ARGON_TIME_COST } = process.env;
-
-interface RegisterBody {
-	email: string;
-	password: string;
-}
-
-function invalidData(reply: FastifyReply) {
-	reply.status(400).send({
-		error: 'Invalid Data',
-	});
-}
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
 	try {
 		// Make sure data has been sent
 		if (!request.body) {
-			invalidData(reply);
+			invalidDataError(reply);
 		}
 		// Get user data from request
-		const { email, password } = request.body as RegisterBody;
+		const { email, password } = request.body as EmailPassword;
 		if (!email || !password) {
-			invalidData(reply);
+			invalidDataError(reply);
 		}
 		// Hash the password
 		const hashedPassword = await argon2.hash(password, {

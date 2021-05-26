@@ -2,6 +2,7 @@ import './env.ts';
 import cookie, { FastifyCookieOptions } from 'fastify-cookie';
 import fastify from 'fastify';
 import { register } from './routes/register';
+import { login } from './routes/login';
 const server = fastify();
 if (!process.env) {
 	throw Error('Enviornment Variables not loaded!');
@@ -21,6 +22,7 @@ server.register(cookie, {
 } as FastifyCookieOptions);
 
 server.post('/api/register', register);
+server.post('/api/login', login);
 
 server.get('/', (request, reply) => {
 	reply.send({

@@ -46,7 +46,6 @@ export async function setAuthCookies(
 				...cookieOptions,
 				expires: expiration,
 			});
-		console.log('authToken', authToken, 'refreshToken', refreshToken);
 	} catch (error) {
 		console.error(error);
 	}
