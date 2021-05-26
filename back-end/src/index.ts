@@ -20,7 +20,7 @@ server.register(cookie, {
 	secret: COOKIE_SECRET,
 } as FastifyCookieOptions);
 
-server.get('/api/register', register);
+server.post('/api/register', register);
 
 server.get('/', (request, reply) => {
 	reply.send({

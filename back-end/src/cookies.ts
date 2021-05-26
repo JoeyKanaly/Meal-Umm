@@ -4,20 +4,20 @@ import jwt from 'jsonwebtoken';
 
 const { JWT_SECRET, ROOT_DOMAIN } = process.env!;
 
-async function createTokens(session: string, userId: string) {
+async function createTokens(sessionToken: string, userId: string) {
 	if (!JWT_SECRET) {
 		throw Error('JWT Secret not loaded');
 	}
 	const authToken = jwt.sign(
 		{
-			session,
+			sessionToken,
 			userId,
 		},
 		JWT_SECRET
 	);
 	const refreshToken = jwt.sign(
 		{
-			session,
+			sessionToken,
 		},
 		JWT_SECRET
 	);
@@ -46,6 +46,7 @@ export async function setAuthCookies(
 				...cookieOptions,
 				expires: expiration,
 			});
+		console.log('authToken', authToken, 'refreshToken', refreshToken);
 	} catch (error) {
 		console.error(error);
 	}
