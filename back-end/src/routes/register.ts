@@ -1,9 +1,9 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { createSession, createUser } from '../user';
 import argon2 from 'argon2';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { setAuthCookies } from '../cookies';
+import { invalidDataError, userExistsError } from '../errors';
 import { connectionData } from '../types/connectionData';
-import { invalidDataError } from '../errors';
+import { createSession, createUser } from '../user';
 const { ARGON_MEMORY_COST, ARGON_PARALLELISM, ARGON_TIME_COST } = process.env;
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
@@ -27,9 +27,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 		// Create User
 		const userId = await createUser(email, hashedPassword);
 		if (!userId) {
-			return reply.send({
-				error: 'User already exists',
-			});
+			userExistsError(reply);
 		}
 		// Create Session
 		const connectionInformation: connectionData = {

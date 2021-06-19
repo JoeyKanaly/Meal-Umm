@@ -1,13 +1,19 @@
 import { FastifyReply } from 'fastify';
 
-export function invalidDataError(reply: FastifyReply) {
-	reply.status(400).send({
-		error: 'Invalid Data',
-	});
+function unauthorizedErrorResponse(reply: FastifyReply, error: string) {
+	reply.status(403).send({
+		error
+	})
 }
 
-export async function noUserError(reply: FastifyReply) {
-	reply.status(400).send({
-		error: 'Invalid User/Password',
-	});
+export function invalidDataError(reply: FastifyReply) {
+	unauthorizedErrorResponse(reply, 'Invalid Data');
+}
+
+export function invalidUserError(reply: FastifyReply) {
+	unauthorizedErrorResponse(reply, 'Invalid Username or Password');
+}
+
+export function userExistsError(reply: FastifyReply) {
+	unauthorizedErrorResponse(reply, 'User already exists');
 }
