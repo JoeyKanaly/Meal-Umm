@@ -1,8 +1,9 @@
-import './env.ts';
-import cookie, { FastifyCookieOptions } from 'fastify-cookie';
 import fastify from 'fastify';
-import { register } from './routes/register';
+import cookie, { FastifyCookieOptions } from 'fastify-cookie';
+import fastifyCors from 'fastify-cors';
+import './env.ts';
 import { login } from './routes/login';
+import { register } from './routes/register';
 const server = fastify();
 if (!process.env) {
 	throw Error('Enviornment Variables not loaded!');
@@ -20,6 +21,10 @@ const { SERVER_PORT, COOKIE_SECRET } = process.env;
 server.register(cookie, {
 	secret: COOKIE_SECRET,
 } as FastifyCookieOptions);
+server.register(fastifyCors, {
+	origin: [/\.ummeal.dev/, 'https://ummeal.dev'],
+	credentials: true,
+});
 
 server.post('/api/register', register);
 server.post('/api/login', login);

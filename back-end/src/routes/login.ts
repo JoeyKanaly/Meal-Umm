@@ -25,7 +25,7 @@ export async function login(request: FastifyRequest, reply: FastifyReply) {
 		};
 		const session = await createSession(userId, connectionInformation);
 		// Set Cookies
-		setAuthCookies(session, userId, reply);
+		await setAuthCookies(session, userId, reply);
 		reply.send({
 			data: 'Success',
 		});
