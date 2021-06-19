@@ -3,6 +3,7 @@ import cookie, { FastifyCookieOptions } from 'fastify-cookie';
 import fastifyCors from 'fastify-cors';
 import './env.ts';
 import { login } from './routes/login';
+import { logout } from './routes/logout';
 import { register } from './routes/register';
 const server = fastify();
 if (!process.env) {
@@ -28,6 +29,7 @@ server.register(fastifyCors, {
 
 server.post('/api/register', register);
 server.post('/api/login', login);
+server.post('/api/logout', logout);
 
 server.get('/', (request, reply) => {
 	reply.send({

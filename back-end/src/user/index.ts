@@ -1,8 +1,9 @@
-import { v4 as uuidv4 } from 'uuid';
-import { connectionData } from '../types/connectionData';
-import { query } from '../db';
-import { randomBytes } from 'crypto';
 import argon2 from 'argon2';
+import { randomBytes } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+import { query } from '../db';
+import { connectionData } from '../types/connectionData';
+
 export async function createUser(
 	email: string,
 	password: string
@@ -77,6 +78,14 @@ export async function verifyUser(
 		return '';
 	} catch (error) {
 		return '';
+		console.error(error);
+	}
+}
+
+export async function removeSession(session: string) {
+	try {
+		const result = await query('DELETE FROM auth."session" WHERE "sessionToken"=$1', [session]);
+	} catch (error) {
 		console.error(error);
 	}
 }
