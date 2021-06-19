@@ -1,0 +1,11 @@
+{
+	local_certs
+}
+
+ummeal.dev {
+	reverse_proxy localhost:3000
+}
+
+api.ummeal.dev {
+	reverse_proxy localhost:7777
+}
