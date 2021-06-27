@@ -3,7 +3,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { setAuthCookies } from '../cookies';
 import { invalidDataError, userExistsError } from '../errors';
 import { connectionData } from '../types/connectionData';
-import { createSession, createUser } from '../user';
+import { createSession, createUser, sendVerificationEmail } from '../user';
 const { ARGON_MEMORY_COST, ARGON_PARALLELISM, ARGON_TIME_COST } = process.env;
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
@@ -15,7 +15,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 		// Get user data from request
 		const { email, password } = request.body as EmailPassword;
 		if (!email || !password) {
-			invalidDataError(reply);
+			return invalidDataError(reply);
 		}
 		// Hash the password
 		const hashedPassword = await argon2.hash(password, {
@@ -27,7 +27,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 		// Create User
 		const userId = await createUser(email, hashedPassword);
 		if (!userId) {
-			userExistsError(reply);
+			return userExistsError(reply);
 		}
 		// Create Session
 		const connectionInformation: connectionData = {
@@ -40,6 +40,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 		reply.send({
 			data: userId,
 		});
+		await sendVerificationEmail(email, userId);
 	} catch (error) {
 		console.error(error);
 	}

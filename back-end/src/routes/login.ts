@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { setAuthCookies } from '../cookies';
 import { invalidDataError, invalidUserError } from '../errors';
 import { connectionData } from '../types/connectionData';
-import { createSession, verifyUser } from '../user';
+import { createSession, verifyUserLogin } from '../user';
 
 export async function login(request: FastifyRequest, reply: FastifyReply) {
 	try {
@@ -14,7 +14,7 @@ export async function login(request: FastifyRequest, reply: FastifyReply) {
 			invalidDataError(reply);
 		}
 		// Verify password
-		const userId: string = await verifyUser(email, password);
+		const userId: string = await verifyUserLogin(email, password);
 		if (!userId) {
 			invalidUserError(reply);
 		}

@@ -1,9 +1,10 @@
 import argon2 from 'argon2';
 import { randomBytes } from 'crypto';
+import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../db';
+import { sendMail } from '../email';
 import { connectionData } from '../types/connectionData';
-
 export async function createUser(
 	email: string,
 	password: string
@@ -56,7 +57,7 @@ export async function createSession(
 	}
 }
 
-export async function verifyUser(
+export async function verifyUserLogin(
 	email: string,
 	password: string
 ): Promise<string> {
@@ -82,9 +83,34 @@ export async function verifyUser(
 	}
 }
 
-export async function removeSession(session: string) {
+export async function removeSession(session: string): Promise<void> {
 	try {
 		const result = await query('DELETE FROM auth."session" WHERE "sessionToken"=$1', [session]);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+export async function sendVerificationEmail(email: string, userId: string) {
+	try {
+		const { ROOT_DOMAIN, JWT_SECRET } = process.env;
+		const verificationToken = jwt.sign(
+			{
+				email,
+			}, JWT_SECRET!,
+			{
+				expiresIn: '1h',
+				jwtid: userId
+			}
+		);
+		const verificationLink = `https://${ROOT_DOMAIN}/verify?token=${verificationToken}`;
+		await sendMail({
+			recipient: email,
+			subject: 'umMeal email verification',
+			message: `Verify email at: ${verificationLink}\nThis link will expire in 1 hour.`,
+			htmlMessage: `Click here to <a href="${verificationLink}">verify your email</a>.
+						  <br/>This link will expire in 1 hour.`
+		});
 	} catch (error) {
 		console.error(error);
 	}
