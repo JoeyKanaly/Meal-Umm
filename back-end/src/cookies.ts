@@ -8,8 +8,10 @@ const cookieOptions: CookieSerializeOptions = {
 	domain: ROOT_DOMAIN,
 	httpOnly: true,
 	secure: true,
-	
+
 };
+
+// TODO: Rename authToken to accessToken
 
 async function createTokens(sessionToken: string, userId: string) {
 	if (!JWT_SECRET) {
@@ -39,13 +41,17 @@ export async function setAuthCookies(
 	try {
 		const { authToken, refreshToken } = await createTokens(session, userId);
 		const now: Date = new Date();
-		const expiration = new Date(now.setDate(now.getDate() + 30));
+		const authTokenExpiration = new Date(now.setTime(now.getTime() + (15 * 60 * 1000)))
+		const refreshTokenExpiration = new Date(now.setDate(now.getDate() + 30));
 
 		reply
-			.setCookie('authToken', authToken, cookieOptions)
+			.setCookie('authToken', authToken, {
+				...cookieOptions,
+				expires: authTokenExpiration
+			})
 			.setCookie('refreshToken', refreshToken, {
 				...cookieOptions,
-				expires: expiration,
+				expires: refreshTokenExpiration,
 			});
 	} catch (error) {
 		console.error(error);

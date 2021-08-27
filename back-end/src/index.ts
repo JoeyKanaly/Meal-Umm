@@ -5,6 +5,8 @@ import './env.ts';
 import { login } from './routes/login';
 import { logout } from './routes/logout';
 import { register } from './routes/register';
+import { verifyEmail } from './routes/verify';
+
 const server = fastify();
 if (!process.env) {
 	throw Error('Enviornment Variables not loaded!');
@@ -30,6 +32,7 @@ server.register(fastifyCors, {
 server.post('/api/register', register);
 server.post('/api/login', login);
 server.post('/api/logout', logout);
+server.post('/api/verify', verifyEmail);
 
 server.get('/', (request, reply) => {
 	reply.send({

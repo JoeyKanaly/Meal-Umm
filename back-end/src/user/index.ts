@@ -1,10 +1,14 @@
 import argon2 from 'argon2';
 import { randomBytes } from 'crypto';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
+import { setAuthCookies } from '../cookies';
 import { query } from '../db';
 import { sendMail } from '../email';
+import { invalidUserError, sessionExpiredError, unexpectedError } from '../errors';
 import { connectionData } from '../types/connectionData';
+
 export async function createUser(
 	email: string,
 	password: string
@@ -111,6 +115,61 @@ export async function sendVerificationEmail(email: string, userId: string) {
 			htmlMessage: `Click here to <a href="${verificationLink}">verify your email</a>.
 						  <br/>This link will expire in 1 hour.`
 		});
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+interface TokenData {
+	sessionToken: string;
+	userId?: string;
+}
+
+export async function getUserFromCookies(request: FastifyRequest, reply: FastifyReply) {
+	try {
+		const { authToken, refreshToken } = request.cookies;
+		if (!process.env) {
+			// TODO: Look into handling errors with custom error types
+			throw Error('Environment variables not loaded');
+		}
+		const { JWT_SECRET } = process.env;
+		if (authToken) {
+			const decodedAuthToken = jwt.verify(authToken, JWT_SECRET!) as TokenData;
+			const user = await query('SELECT * FROM auth."user" WHERE id=$1', [
+				decodedAuthToken.userId || ''
+			]);
+			if (!user.rowCount) {
+				return invalidUserError(reply);
+			}
+			return user.rows[0];
+		}
+
+		if (refreshToken) {
+			const decodedRefreshToken = jwt.verify(refreshToken, JWT_SECRET!) as TokenData;
+			const session = await query('SELECT * FROM auth."session" WHERE session."sessionToken"=$1', [
+				decodedRefreshToken.sessionToken
+			]);
+			if (!session.rowCount || !session.rows[0].valid) {
+				return sessionExpiredError(reply);
+			}
+			const user = await query('SELECT * FROM auth."user" WHERE id=$1', [
+				session.rows[0].userId
+			]);
+			await setAuthCookies(session.rows[0].sessionToken, session.rows[0].userId, reply);
+			return user.rows[0];
+		}
+	} catch (error) {
+		console.error(error);
+		return unexpectedError(reply);
+	}
+	sessionExpiredError(reply);
+}
+
+export async function setUserVerified(userId: string) {
+	try {
+		await query('UPDATE auth."user" SET "verified"=TRUE WHERE "id"=$1', [
+			userId
+		]);
 	} catch (error) {
 		console.error(error);
 	}
