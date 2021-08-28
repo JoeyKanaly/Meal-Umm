@@ -1,13 +1,13 @@
-import argon2 from 'argon2';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { setAuthCookies } from '../cookies';
-import { invalidDataError, userExistsError } from '../errors';
+import { invalidDataError, unexpectedError, userExistsError } from '../errors';
 import { connectionData } from '../types/connectionData';
 import { createSession, createUser, sendVerificationEmail } from '../user';
-const { ARGON_MEMORY_COST, ARGON_PARALLELISM, ARGON_TIME_COST } = process.env;
+import { hashPassword } from '../user/password';
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
 	try {
+		const { ARGON_MEMORY_COST, ARGON_PARALLELISM, ARGON_TIME_COST } = process.env;
 		// Make sure data has been sent
 		if (!request.body) {
 			invalidDataError(reply);
@@ -18,12 +18,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 			return invalidDataError(reply);
 		}
 		// Hash the password
-		const hashedPassword = await argon2.hash(password, {
-			type: argon2.argon2id,
-			memoryCost: parseInt(ARGON_MEMORY_COST as string),
-			parallelism: parseInt(ARGON_PARALLELISM as string),
-			timeCost: parseInt(ARGON_TIME_COST as string),
-		});
+		const hashedPassword = await hashPassword(password);
+		if (!hashedPassword) {
+			return unexpectedError(reply);
+		}
 		// Create User
 		const userId = await createUser(email, hashedPassword);
 		if (!userId) {

@@ -1,0 +1,4 @@
+- Forgot Password
+- Require Confirm Password for Registration
+- Better Error Handling
+- 2FA (eventually)

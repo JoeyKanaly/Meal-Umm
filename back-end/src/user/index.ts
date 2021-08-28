@@ -174,3 +174,15 @@ export async function setUserVerified(userId: string) {
 		console.error(error);
 	}
 }
+
+export async function updateUserPassword(hashedPassword: string, userId: string, reply: FastifyReply) {
+	try {
+		await query('UPDATE auth."user" SET "password"=$1 WHERE "id"=$2', [
+			hashedPassword,
+			userId
+		]);
+	} catch (error) {
+		console.error(error);
+		return unexpectedError(reply);
+	}
+}
