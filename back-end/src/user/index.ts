@@ -5,9 +5,8 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { setAuthCookies } from '../cookies';
 import { query } from '../db';
-import { sendMail } from '../email';
+import { sendEmail } from '../email';
 import { invalidUserError, sessionExpiredError, unexpectedError } from '../errors';
-import { connectionData } from '../types/connectionData';
 
 export async function createUser(
 	email: string,
@@ -95,6 +94,8 @@ export async function removeSession(session: string): Promise<void> {
 	}
 }
 
+
+// TODO: Refactor this, should only be sending the email, should not be generating the verification token as well
 export async function sendVerificationEmail(email: string, userId: string) {
 	try {
 		const { ROOT_DOMAIN, JWT_SECRET } = process.env;
@@ -108,7 +109,7 @@ export async function sendVerificationEmail(email: string, userId: string) {
 			}
 		);
 		const verificationLink = `https://${ROOT_DOMAIN}/verify?token=${verificationToken}`;
-		await sendMail({
+		await sendEmail({
 			recipient: email,
 			subject: 'umMeal email verification',
 			message: `Verify email at: ${verificationLink}\nThis link will expire in 1 hour.`,
@@ -118,6 +119,20 @@ export async function sendVerificationEmail(email: string, userId: string) {
 	} catch (error) {
 		console.error(error);
 	}
+}
+
+export async function sendResetPasswordEmail(email: string, token: string) {
+	const { ROOT_DOMAIN } = process.env;
+
+	const resetLink = `https://${ROOT_DOMAIN}/reset-password?token=${token}`;
+
+	await sendEmail({
+		recipient: email,
+		subject: 'umMeal Reset Your Password',
+		message: `Go to ${resetLink} to reset your password.\nThis link will expire in 15 minutes`,
+		htmlMessage: `Click to <a href="${resetLink}">reset your password.</a>
+					  <br/>This link will expire in 15 minutes.`
+	});
 }
 
 interface TokenData {
@@ -184,5 +199,15 @@ export async function updateUserPassword(hashedPassword: string, userId: string,
 	} catch (error) {
 		console.error(error);
 		return unexpectedError(reply);
+	}
+}
+
+export async function getUserFromEmail(email: string) {
+	try {
+		const result = await query('SELECT * FROM auth."user" WHERE "email"=$1', [email]);
+		if (result.rowCount) {
+			return result.rows[0] as UserInfo;
+		}
+	} catch (error) {
 	}
 }

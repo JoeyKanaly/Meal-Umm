@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { setAuthCookies } from '../cookies';
 import { invalidDataError, invalidUserError } from '../errors';
-import { connectionData } from '../types/connectionData';
 import { createSession, verifyUserLogin } from '../user';
 
 export async function login(request: FastifyRequest, reply: FastifyReply) {

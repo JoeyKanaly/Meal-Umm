@@ -7,7 +7,7 @@ interface SendMailOptions {
 	subject: string,
 }
 
-export async function sendMail(options: SendMailOptions) {
+export async function sendEmail(options: SendMailOptions) {
 	try {
 		const { SMTP_HOST, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD } = process.env!;
 		let transporter = nodemailer.createTransport({

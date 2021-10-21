@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { setAuthCookies } from '../cookies';
 import { invalidDataError, unexpectedError, userExistsError } from '../errors';
-import { connectionData } from '../types/connectionData';
 import { createSession, createUser, sendVerificationEmail } from '../user';
 import { hashPassword } from '../user/password';
 

@@ -3,6 +3,7 @@ import cookie, { FastifyCookieOptions } from 'fastify-cookie';
 import fastifyCors from 'fastify-cors';
 import './env.ts';
 import { changePassword } from './routes/changePassword';
+import { forgotPassword } from './routes/forgotPassword';
 import { login } from './routes/login';
 import { logout } from './routes/logout';
 import { register } from './routes/register';
@@ -27,6 +28,7 @@ server.post('/api/login', login);
 server.post('/api/logout', logout);
 server.post('/api/verify', verifyEmail);
 server.post('/api/changepassword', changePassword);
+server.post('/api/forgotpassword', forgotPassword);
 
 server.get('/', (request, reply) => {
 	reply.send({

@@ -1,4 +1,4 @@
-export interface connectionData {
+interface connectionData {
 	ip: string;
 	userAgent: string | undefined;
 }
