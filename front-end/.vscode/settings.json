@@ -8,12 +8,12 @@
 	},
 	"[javascriptreact]": {
 		"editor.formatOnSave": false,
-		"editor.defaultFormatter": null
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	// show eslint icon at bottom toolbar
 	"eslint.alwaysShowStatus": true,
 	// tell the ESLint plugin to run on save
 	"editor.codeActionsOnSave": {
 		"source.fixAll": true
-	},
+	}
 }
