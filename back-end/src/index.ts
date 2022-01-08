@@ -7,6 +7,7 @@ import { forgotPassword } from './routes/forgotPassword';
 import { login } from './routes/login';
 import { logout } from './routes/logout';
 import { register } from './routes/register';
+import { resetForgotPassword } from './routes/resetForgotPassword';
 import { verifyEmail } from './routes/verify';
 
 const server = fastify();
@@ -23,12 +24,13 @@ server.register(fastifyCors, {
 	credentials: true,
 });
 
-server.post('/api/register', register);
-server.post('/api/login', login);
-server.post('/api/logout', logout);
-server.post('/api/verify', verifyEmail);
-server.post('/api/changepassword', changePassword);
-server.post('/api/forgotpassword', forgotPassword);
+server.post('/auth/register', register);
+server.post('/auth/login', login);
+server.post('/auth/logout', logout);
+server.post('/auth/verify', verifyEmail);
+server.post('/auth/changepassword', changePassword);
+server.post('/auth/forgotpassword', forgotPassword);
+server.post('/auth/resetforgotpassword', resetForgotPassword);
 
 server.get('/', (request, reply) => {
 	reply.send({

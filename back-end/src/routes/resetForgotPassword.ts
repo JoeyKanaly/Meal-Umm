@@ -5,26 +5,33 @@ import { getUserFromEmail, updateUserPassword } from '../user';
 import { hashPassword } from '../user/password';
 
 interface resetForgotPasswordData {
-	token: string,
-	newPassword: string,
-	confirmPassword: string
+	token: string;
+	newPassword: string;
+	confirmPassword: string;
 }
 
-export async function resetForgotPassword(request: FastifyRequest, reply: FastifyReply) {
+export async function resetForgotPassword(
+	request: FastifyRequest,
+	reply: FastifyReply
+) {
 	const { JWT_SECRET } = process.env;
-	const { token, newPassword, confirmPassword } = request.body as resetForgotPasswordData;
-	const userData = jwt.verify(token, JWT_SECRET!) as { email: string, userid: string };
+	const { token, newPassword, confirmPassword } =
+		request.body as resetForgotPasswordData;
+	const userData = jwt.verify(token, JWT_SECRET!) as {
+		email: string;
+		userid: string;
+	};
 	const user = await getUserFromEmail(userData.email);
 
 	if (!user || user.id !== userData.userid) {
 		return reply.status(400).send({
-			error: 'User not found'
-		})
+			error: 'Issue resetting password',
+		});
 	}
 
 	if (newPassword !== confirmPassword) {
 		return reply.status(400).send({
-			error: 'Passwords did not match'
+			error: 'Passwords did not match',
 		});
 	}
 
@@ -35,6 +42,6 @@ export async function resetForgotPassword(request: FastifyRequest, reply: Fastif
 
 	await updateUserPassword(hashedPassword, user.id, reply);
 	reply.send({
-		success: 'Password has been reset'
+		success: 'Password has been reset',
 	});
 }
