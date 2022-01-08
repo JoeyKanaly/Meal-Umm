@@ -4,6 +4,12 @@ import { createGlobalStyle } from 'styled-components';
 const GlobalStyle = createGlobalStyle`
 	:root {
 		--primary: #76D914;
+		--margin-top-bottom: 4.8rem;
+		--margin-left-right: 12.2rem;
+		@media screen and (max-width: 56rem) {
+			--margin-left-right: 3rem;
+		}
+		--margin: var(--margin-top-bottom) var(--margin-left-right);
 	}
 	* {
 		margin: 0;

@@ -7,18 +7,27 @@ const StyledHero = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin: 4.8rem 12.2rem;
+	margin: var(--margin);
 `;
 
 const StyledDescription = styled.div`
+	@media screen and (max-width: 56rem) {
+		margin: 0 auto;
+	}
 	h1 {
 		font-weight: bold;
 		font-size: 3.6rem;
 		margin-bottom: 1.6rem;
 	}
 	p {
-		width: 45ch;
+		max-width: 45ch;
 		line-height: 2.4rem;
+	}
+`;
+
+const StyledImageContainer = styled.div`
+	@media screen and (max-width: 56rem) {
+		display: none;
 	}
 `;
 
@@ -35,7 +44,9 @@ export function Hero() {
 					what you need, and nothing more.
 				</p>
 			</StyledDescription>
-			<Image src={heroImage} alt="" width="467"></Image>
+			<StyledImageContainer>
+				<Image src={heroImage} alt="Woman Cooking" width="467"></Image>
+			</StyledImageContainer>
 		</StyledHero>
 	);
 }

@@ -4,11 +4,12 @@ import styled from 'styled-components';
 import logo from '../../public/logo-white.svg';
 
 const StyledFooter = styled.footer`
-	height: 30rem;
-	padding: 0 12.2rem;
+	min-height: 30rem;
+	padding: 0 var(--margin-left-right);
 	display: flex;
 	background: #222;
 	margin-top: 7.2rem;
+	overflow: scroll;
 `;
 
 const StyledFooterContainer = styled.div`
@@ -16,16 +17,26 @@ const StyledFooterContainer = styled.div`
 	width: 100%;
 	align-items: center;
 	justify-content: space-between;
-`;
-
-const StyledFooterNav = styled.nav`
-	display: flex;
-	div {
-		display: flex;
+	@media screen and (max-width: 56rem) {
+		padding: var(--margin-top-bottom) 0;
 		flex-direction: column;
 	}
-	div:first-child {
+`;
+
+const StyledFooterNav = styled.div`
+	display: flex;
+	nav {
+		display: flex;
+		flex-direction: column;
+		width: max-content;
+	}
+	nav:first-child {
 		margin-right: 1.2rem;
+	}
+
+	h2 {
+		color: white;
+		margin-bottom: 1.2rem;
 	}
 	a {
 		text-decoration: none;
@@ -40,18 +51,26 @@ const StyledFooterNav = styled.nav`
 	}
 `;
 
+const StyledImageContainer = styled.div`
+	@media screen and (max-width: 56rem) {
+		margin-bottom: var(--margin-top-bottom);
+	}
+`;
+
 export function Footer() {
 	return (
 		<StyledFooter>
 			<StyledFooterContainer>
-				<Image src={logo} alt="umMeal Logo"></Image>
-				{/*
-			links
-				Site Nav
-				Legal Nav
-		*/}
+				<StyledImageContainer>
+					<Link href="/">
+						<a>
+							<Image src={logo} alt="umMeal Logo"></Image>
+						</a>
+					</Link>
+				</StyledImageContainer>
 				<StyledFooterNav>
-					<div>
+					<nav aria-label="Site">
+						<h2>Site</h2>
 						<Link href="/">
 							<a>Home</a>
 						</Link>
@@ -61,8 +80,9 @@ export function Footer() {
 						<Link href="/">
 							<a>Support</a>
 						</Link>
-					</div>
-					<div>
+					</nav>
+					<nav aria-label="Legal">
+						<h2>Legal</h2>
 						<Link href="/">
 							<a>Contact</a>
 						</Link>
@@ -75,7 +95,7 @@ export function Footer() {
 						<Link href="/">
 							<a>Terms of Use</a>
 						</Link>
-					</div>
+					</nav>
 				</StyledFooterNav>
 			</StyledFooterContainer>
 		</StyledFooter>
