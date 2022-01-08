@@ -24,13 +24,13 @@ server.register(fastifyCors, {
 	credentials: true,
 });
 
-server.post('/api/register', register);
-server.post('/api/login', login);
-server.post('/api/logout', logout);
-server.post('/api/verify', verifyEmail);
-server.post('/api/changepassword', changePassword);
-server.post('/api/forgotpassword', forgotPassword);
-server.post('/api/resetforgotpassword', resetForgotPassword);
+server.post('/auth/register', register);
+server.post('/auth/login', login);
+server.post('/auth/logout', logout);
+server.post('/auth/verify', verifyEmail);
+server.post('/auth/changepassword', changePassword);
+server.post('/auth/forgotpassword', forgotPassword);
+server.post('/auth/resetforgotpassword', resetForgotPassword);
 
 server.get('/', (request, reply) => {
 	reply.send({
